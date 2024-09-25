@@ -1,2 +1,17 @@
-# node.js
+# Node.js
 node_modules/
+
+# dotenv environment variables
+.env
+
+# Parcel-bundler cache
+.cache
+
+# dist directory
+dist/
+build/
+
+# IDE specific
+.vscode/
+.idea/
+.DS_Store
