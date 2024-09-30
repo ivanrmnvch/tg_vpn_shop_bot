@@ -5,27 +5,28 @@ require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
 
+// todo логирование
+// todo redis для сессий
+// todo postgres для долгих данных
+// todo разделение на компоненты, модульная структура, маршрутизация
+// todo pulling на локалке на проде webhook
+// todo резервное копирование, дамп БД
+// todo балансировка нагрузи
+// todo healthcheck
+
 // Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(token, { polling: true });
 
-// Matches "/echo [whatever]"
-bot.onText(/\/echo (.+)/, (msg, match) => {
-	// 'msg' is the received Message from Telegram
-	// 'match' is the result of executing the regexp above on the text content
-	// of the message
-
-	const chatId = msg.chat.id;
-	const resp = match[1]; // the captured "whatever"
-
-	// send back the matched "whatever" to the chat
-	bot.sendMessage(chatId, resp);
-});
-
-// Listen for any kind of message. There are different kinds of
-// messages.
+// Обработчик на любое текстовое сообщение
 bot.on('message', (msg) => {
+	console.log('msg', msg);
 	const chatId = msg.chat.id;
+	const text = msg.text;
 
-	// send a message to the chat acknowledging receipt of their message
-	bot.sendMessage(chatId, 'Received your message');
+	console.log(
+		`Получено сообщение: ${text} от пользователя ${msg.from.username}`
+	);
+
+	// Ответ на полученное сообщение
+	bot.sendMessage(chatId, 'Привет! Я получил ваше сообщение.');
 });
