@@ -2,6 +2,7 @@ const { Bot, InlineKeyboard } = require('grammy');
 const process = require('node:process');
 const path = require('node:path');
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
+const { API } = require('./utils/api');
 
 const { getLocaleText } = require('./utils/getLocaleText');
 
@@ -9,8 +10,21 @@ const token = process.env.TELEGRAM_BOT_TOKEN;
 
 const bot = new Bot(token);
 
-bot.use((ctx, next) => {
-	const lang = ctx?.update?.message?.from?.language_code || 'en';
+bot.use(async (ctx, next) => {
+	console.log('>>> CONTEXT', ctx);
+	console.log('>>> UPDATE', ctx.update);
+	const {
+		id,
+		first_name: firstName,
+		username: userName,
+		language_code: lang = 'en',
+	} = ctx?.update?.message?.from || {};
+
+	const check = await API.post('user/check', null, {
+		params: { id },
+	});
+
+	console.log('>>> CHECK', check);
 	ctx.getLangText = (path) => getLocaleText(lang, path);
 	next();
 });
