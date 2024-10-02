@@ -1,34 +1,39 @@
-const { Bot, InlineKeyboard } = require('grammy');
+const { RedisAdapter } = require('@grammyjs/storage-redis');
+const { Bot, session, InlineKeyboard } = require('grammy');
 const process = require('node:process');
 const path = require('node:path');
-require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
-const { API } = require('./utils/api');
+const redisClient = require('./config/redisClient');
 
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
+
+const { getMeta } = require('./stages');
 const { getLocaleText } = require('./utils/getLocaleText');
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
-
 const bot = new Bot(token);
 
+const redisAdapter = new RedisAdapter({ instance: redisClient });
+
+bot.use(
+	session({
+		initial: () => ({}),
+		storage: redisAdapter,
+	})
+);
 bot.use(async (ctx, next) => {
-	console.log('>>> CONTEXT', ctx);
-	console.log('>>> UPDATE', ctx.update);
-	const {
-		id,
-		first_name: firstName,
-		username: userName,
-		language_code: lang = 'en',
-	} = ctx?.update?.message?.from || {};
+	if (!ctx.session.meta) {
+		ctx.session.meta = await getMeta(ctx);
+	}
 
-	const check = await API.post('user/check', null, {
-		params: { id },
-	});
-
-	console.log('>>> CHECK', check);
+	const lang = ctx?.update?.message?.from?.language_code || 'en';
 	ctx.getLangText = (path) => getLocaleText(lang, path);
+
 	next();
 });
 bot.command('start', (ctx) => {
+	console.log('>>> START CONTEXT', ctx.session);
+
+	// todo функция для построения кнопок, передавать конфиги
 	const inlineKeyboard = new InlineKeyboard()
 		.text(ctx.getLangText('start.btn.buyVpnKey'), 'buy_vpn_key')
 		.row()
@@ -76,6 +81,11 @@ bot.callbackQuery('support', (ctx) => {
 bot.callbackQuery('about_us', (ctx) => {
 	ctx.answerCallbackQuery(); // Закрыть всплывающее уведомление
 	ctx.reply('Мы предоставляем VPN сервисы...');
+});
+
+bot.catch((err) => {
+	console.log('>>> err::', err);
+	err.ctx.reply('Бот временно недоступен, перезвоните позже');
 });
 
 bot.start();
