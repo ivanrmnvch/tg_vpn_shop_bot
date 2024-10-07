@@ -1,8 +1,7 @@
-const path = require('node:path');
-require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
+const { BACKEND_BASE_URL } = require('../../config/envConfig').config;
 
 const Api = require('./api');
 
-const API = new Api(process.env.BACKEND_BASE_URL);
+const API = new Api(BACKEND_BASE_URL);
 
 module.exports = { API };
