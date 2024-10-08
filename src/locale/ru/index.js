@@ -1,7 +1,9 @@
 const vpn_services = require('./vpn_services');
+const transaction = require('./transaction');
 
 module.exports = {
 	vpn_services,
+	transaction,
 
 	start: {
 		greeting:

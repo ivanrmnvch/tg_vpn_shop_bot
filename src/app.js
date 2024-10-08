@@ -8,6 +8,7 @@ const botEnv = require('./modules/middlewares/bot_env');
 const commands = require('./modules/commands');
 
 const vpnServicesModule = require('./modules/vpn_services/vpn_services.module');
+const transactionModule = require('./modules/transaction/transaction.module');
 
 const { TELEGRAM_BOT_TOKEN } = require('./config/envConfig').config;
 
@@ -33,9 +34,11 @@ bot.use(botEnv);
 commands.start(bot);
 
 vpnServicesModule(bot);
+transactionModule(bot);
 
 bot.catch((err) => {
-	console.log('>>> err::', err);
+	console.error('>>> GRAMMY ERROR', err);
+	err.ctx.reply('>>> GRAMMY ERROR');
 	// err.ctx.reply('Бот временно недоступен, перезвоните позже');
 });
 

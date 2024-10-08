@@ -20,4 +20,5 @@ module.exports = {
 		six_months: 'VPN на 6 месяцев',
 		year: 'VPN на год',
 	},
+	qrCodeDescription: 'Ваш QR-код, скачайте его на свое устройство',
 };

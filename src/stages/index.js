@@ -20,18 +20,21 @@ const getMeta = async (ctx) => {
 		language_code: lang,
 	} = ctx?.update?.message?.from || {};
 
-	const check = await checkUser(id);
+	const check = await checkUser(id, ctx);
 
 	if (!check) {
-		await addUser({
-			id,
-			firstName,
-			userName,
-			lang,
-		});
+		await addUser(
+			{
+				id,
+				firstName,
+				userName,
+				lang,
+			},
+			ctx
+		);
 	}
 
-	return getUserMeta(id);
+	return getUserMeta(id, ctx);
 };
 
 module.exports = { getMeta };
