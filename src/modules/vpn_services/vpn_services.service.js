@@ -1,4 +1,4 @@
-const { logInfo } = require('../../utils/logger');
+const { logInfo, logError } = require('../../utils/logger');
 const { PROVIDER_TOKEN_TEST } = require('../../config/envConfig').config;
 const { generateQRCode } = require('./helpers');
 const prices = require('../../const/prices');
@@ -16,11 +16,19 @@ const provideVpnServices = (ctx) => {
 /** Метод оформления пробного периода */
 const getTrialPeriod = async (ctx) => {
 	logInfo('Getting trial period', getTrialPeriod.name, ctx);
-	const { id } = Object.values(ctx.update).pop().from;
-	const qrCode = await generateQRCode(id, 'nl_01');
-	await ctx.replyWithPhoto(qrCode, {
-		caption: 'test',
-	});
+	if (!ctx.session.meta.newUser) {
+		ctx.reply(ctx.getLangText('vpn_services.trialIsBlock'));
+		return;
+	}
+	try {
+	} catch (e) {
+		logError();
+	}
+	// const { id } = Object.values(ctx.update).pop().from;
+	// const qrCode = await generateQRCode(id, 'nl_01');
+	// await ctx.replyWithPhoto(qrCode, {
+	// 	caption: 'test',
+	// });
 };
 
 /** Метод оформления платных VPN подписок */

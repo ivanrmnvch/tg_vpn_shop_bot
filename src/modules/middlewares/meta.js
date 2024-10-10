@@ -9,7 +9,9 @@ const setUserMeta = async (ctx, next) => {
 
 	const isAllowedType = allowedMsgTypes.includes(msgType);
 
-	if (isAllowedType && !ctx.session.meta) {
+	const updateMeta = isAllowedType && ctx.session.meta?.newUser;
+
+	if (updateMeta) {
 		logInfo('Setting user meta', setUserMeta.name, ctx);
 		const meta = await getMeta(ctx);
 		ctx.session.meta = meta;
