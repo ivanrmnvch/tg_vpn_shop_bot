@@ -2,7 +2,7 @@ const { getMeta } = require('./helpers');
 const { getLocaleText } = require('../../utils/getLocaleText');
 const { logInfo } = require('../../utils/logger');
 
-async function setUserMeta(ctx, next) {
+const setUserMeta = async (ctx, next) => {
 	const getMsgType = (ctx) => Object.keys(ctx.update).pop();
 	const allowedMsgTypes = ['message', 'callback_query'];
 	const msgType = getMsgType(ctx);
@@ -10,7 +10,7 @@ async function setUserMeta(ctx, next) {
 	const isAllowedType = allowedMsgTypes.includes(msgType);
 
 	if (isAllowedType && !ctx.session.meta) {
-		logInfo('Setting user meta', setUserMeta.name, { ctx: ctx.update });
+		logInfo('Setting user meta', setUserMeta.name, ctx);
 		const meta = await getMeta(ctx);
 		ctx.session.meta = meta;
 		logInfo('User meta successfully set', setUserMeta.name, meta);
@@ -21,6 +21,6 @@ async function setUserMeta(ctx, next) {
 	ctx.getLangText = (path) => getLocaleText(lang, path);
 
 	next();
-}
+};
 
 module.exports = setUserMeta;

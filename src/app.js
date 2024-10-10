@@ -8,8 +8,8 @@ const meta = require('./modules/middlewares/meta');
 
 const commands = require('./modules/commands');
 
-const vpnServicesModule = require('./modules/vpn_services/vpn_services.module');
-const transactionModule = require('./modules/transaction/transaction.module');
+const vpnServicesController = require('./modules/vpn_services/vpn_services.controller');
+const transactionController = require('./modules/transaction/transaction.controller');
 
 const { TELEGRAM_BOT_TOKEN } = require('./config/envConfig').config;
 
@@ -35,11 +35,11 @@ bot.use(meta);
 
 commands.start(bot);
 
-vpnServicesModule(bot);
-transactionModule(bot);
+vpnServicesController(bot);
+transactionController(bot);
 
 bot.catch((err) => {
-	logError('Global error', err);
+	logError('Global error', 'App', err);
 	err.ctx.reply('>>> GRAMMY ERROR');
 });
 

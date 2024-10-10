@@ -3,9 +3,9 @@ const stream = require('stream');
 const { InputFile } = require('grammy');
 const { logInfo, logError } = require('../../../utils/logger');
 
-async function getQRCode(id, code) {
+const generateQRCode = async (id, code) => {
 	try {
-		logInfo('Getting QR code', getQRCode.name, { id, code });
+		logInfo('QR code generation', generateQRCode.name, { id, code });
 		const QRCodeStream = await API.get('vpn-services', {
 			params: { id, code },
 			responseType: 'stream',
@@ -15,9 +15,9 @@ async function getQRCode(id, code) {
 		QRCodeStream.pipe(passThroughStream);
 		return new InputFile(passThroughStream);
 	} catch (e) {
-		logError(e, getQRCode.name);
+		logError('QR code generation error', generateQRCode.name, e);
 		return null;
 	}
-}
+};
 
-module.exports = { getQRCode };
+module.exports = { generateQRCode };

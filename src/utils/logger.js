@@ -62,20 +62,32 @@ const logger = createLogger({
 });
 
 module.exports = {
-	logInfo: (message, label, meta) => {
-		logger.info(message, { label, meta });
+	logInfo: (message, label, data) => {
+		const ctx = data?.update ? Object.values(data.update).pop() : null;
+		logger.info(message, {
+			label,
+			meta: {
+				...(ctx
+					? {
+							from: ctx.from,
+							data: ctx?.data,
+							text: ctx?.text,
+							successful_payment: ctx?.successful_payment,
+						}
+					: {}),
+				...(ctx ? {} : data),
+			},
+		});
 	},
 	logError: (message, label, error) => {
-		console.log('message', message);
-		console.log('error', error);
 		const { stack, name, ctx } = error;
 		logger.error(message, {
 			stack,
 			meta: {
 				type: name,
 				ctx: ctx?.update,
-				label,
 			},
+			label,
 		});
 	},
 };
