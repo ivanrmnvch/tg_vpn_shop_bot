@@ -2,8 +2,9 @@ const { RedisAdapter } = require('@grammyjs/storage-redis');
 const { Bot, session } = require('grammy');
 const redisClient = require('./config/redisClient');
 
+const { logError } = require('./utils/logger');
+
 const meta = require('./modules/middlewares/meta');
-const botEnv = require('./modules/middlewares/bot_env');
 
 const commands = require('./modules/commands');
 
@@ -21,6 +22,8 @@ const redisAdapter = new RedisAdapter({ instance: redisClient });
 // todo 1.2 фикс методов
 // todo 2. Реализовать "10 дней бесплатной подписки"
 
+// todo вынести lang в отдельный middleware
+
 bot.use(
 	session({
 		initial: () => ({}),
@@ -29,7 +32,6 @@ bot.use(
 );
 
 bot.use(meta);
-bot.use(botEnv);
 
 commands.start(bot);
 
@@ -37,9 +39,8 @@ vpnServicesModule(bot);
 transactionModule(bot);
 
 bot.catch((err) => {
-	console.error('>>> GRAMMY ERROR', err);
+	logError('Global error', err);
 	err.ctx.reply('>>> GRAMMY ERROR');
-	// err.ctx.reply('Бот временно недоступен, перезвоните позже');
 });
 
 bot.start();

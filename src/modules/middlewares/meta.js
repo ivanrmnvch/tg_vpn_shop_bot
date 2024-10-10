@@ -1,8 +1,8 @@
-const { getMeta } = require('../../stages');
+const { getMeta } = require('./helpers');
 const { getLocaleText } = require('../../utils/getLocaleText');
+const { logInfo } = require('../../utils/logger');
 
-module.exports = async (ctx, next) => {
-	console.log('>>> START CTX', ctx);
+async function setUserMeta(ctx, next) {
 	const getMsgType = (ctx) => Object.keys(ctx.update).pop();
 	const allowedMsgTypes = ['message', 'callback_query'];
 	const msgType = getMsgType(ctx);
@@ -10,21 +10,17 @@ module.exports = async (ctx, next) => {
 	const isAllowedType = allowedMsgTypes.includes(msgType);
 
 	if (isAllowedType && !ctx.session.meta) {
-		console.log('>>> START SESSION', ctx.session);
-		ctx.session.meta = await getMeta(ctx);
-		ctx.session.meta.newUser = true;
-		console.log('>>> META', ctx.session.meta);
+		logInfo('Setting user meta', setUserMeta.name, { ctx: ctx.update });
+		const meta = await getMeta(ctx);
+		ctx.session.meta = meta;
+		logInfo('User meta successfully set', setUserMeta.name, meta);
 	}
-
-	// todo вынести lang в отдельный middleware
 
 	const lang = ctx?.update?.[msgType]?.from?.language_code || 'en';
 
-	// console.log('lang', lang);
-
 	ctx.getLangText = (path) => getLocaleText(lang, path);
 
-	console.log('>>> CTX', ctx);
-
 	next();
-};
+}
+
+module.exports = setUserMeta;

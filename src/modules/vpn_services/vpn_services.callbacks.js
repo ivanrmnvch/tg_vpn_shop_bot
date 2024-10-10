@@ -1,19 +1,22 @@
 const vpnServiceButtons = require('./buttons/vpn_service_buttons');
 const { TRIAL, MONTH, SIX_MONTHS, YEAR } = require('../../const/services');
 const prices = require('../../const/prices');
-const { InputFile } = require('grammy');
 const { getQRCode } = require('./utils/getQRCode');
+const { logInfo } = require('../../utils/logger');
+const { PROVIDER_TOKEN_TEST } = require('../../config/envConfig').config;
+
+/** Метод выбора VPN услуг */
+const vpnServices = (ctx) => {
+	logInfo('Providing vpn services', vpnServices.name, ctx);
+	ctx.answerCallbackQuery();
+	ctx.reply(ctx.getLangText('vpn_services.title'), {
+		reply_markup: vpnServiceButtons(ctx),
+	});
+};
 
 module.exports = (bot) => {
-	/**
-	 * Метод выбора VPN услуг
-	 */
-	bot.callbackQuery('vpn_services', (ctx) => {
-		ctx.answerCallbackQuery();
-		ctx.reply(ctx.getLangText('vpn_services.title'), {
-			reply_markup: vpnServiceButtons(ctx),
-		});
-	});
+	/** Метод выбора VPN услуг */
+	bot.callbackQuery('vpn_services', vpnServices);
 
 	/**
 	 * Метод оформления пробного периода
@@ -44,7 +47,7 @@ module.exports = (bot) => {
 				},
 			],
 			{
-				provider_token: ctx.config.PROVIDER_TOKEN_TEST,
+				provider_token: PROVIDER_TOKEN_TEST,
 			}
 		);
 	});
