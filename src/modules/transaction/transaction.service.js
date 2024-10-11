@@ -1,6 +1,6 @@
 const { logInfo, logError } = require('../../utils/logger');
 const { API } = require('../../utils/api');
-const { InlineKeyboard } = require('grammy');
+const vpnServices = require('../vpn_services/vpn_services.service');
 
 /** Метод подтверждения оплаты */
 const confirmPayment = async (ctx) => {
@@ -37,12 +37,8 @@ const successfulPayment = async (ctx) => {
 		// todo что делать в случае ошибки???
 	}
 
-	ctx.reply(ctx.getLangText('transaction.title'), {
-		reply_markup: new InlineKeyboard().text(
-			ctx.getLangText('transaction.button'),
-			'get_qr_code'
-		),
-	});
+	ctx.reply(ctx.getLangText('transaction.title'));
+	await vpnServices.getQRCode(ctx);
 };
 
 module.exports = {

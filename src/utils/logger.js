@@ -61,31 +61,34 @@ const logger = createLogger({
 	],
 });
 
+const dataTransform = (data = {}) => {
+	const ctx = data?.update ? Object.values(data.update).pop() : null;
+	return ctx
+		? {
+				ctx: {
+					from: ctx.from,
+					data: ctx?.data,
+					text: ctx?.text,
+					successful_payment: ctx?.successful_payment,
+				},
+			}
+		: { ...data };
+};
+
 module.exports = {
 	logInfo: (message, label, data) => {
-		const ctx = data?.update ? Object.values(data.update).pop() : null;
 		logger.info(message, {
 			label,
-			meta: {
-				...(ctx
-					? {
-							from: ctx.from,
-							data: ctx?.data,
-							text: ctx?.text,
-							successful_payment: ctx?.successful_payment,
-						}
-					: {}),
-				...(ctx ? {} : data),
-			},
+			meta: dataTransform(data),
 		});
 	},
 	logError: (message, label, error) => {
-		const { stack, name, ctx } = error;
+		const { stack, name, ctx: data } = error;
 		logger.error(message, {
 			stack,
 			meta: {
+				...dataTransform(data),
 				type: name,
-				ctx: ctx?.update,
 			},
 			label,
 		});

@@ -1,7 +1,9 @@
+const common = require('./common');
 const vpn_services = require('./vpn_services');
 const transaction = require('./transaction');
 
 module.exports = {
+	common,
 	vpn_services,
 	transaction,
 
