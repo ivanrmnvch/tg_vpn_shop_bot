@@ -1,6 +1,6 @@
 const Redis = require('ioredis');
 const { REDIS_USER, REDIS_USER_PASSWORD, REDIS_HOST, REDIS_PORT } =
-	require('./envConfig').config;
+	require('./envConfig').redis;
 
 const redisClient = new Redis({
 	username: REDIS_USER,

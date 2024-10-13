@@ -16,11 +16,11 @@ const paramParser = (string, params) => {
 	return newString;
 };
 
-const getLocaleText = (lang, path, text = null) => {
+const getLocaleText = (lang, path, params = null) => {
 	const langString = path
 		.split('.')
 		.reduce((acc, field) => (acc[field] ? acc[field] : acc), locale[lang]);
-	return text ? paramParser(langString, text) : langString;
+	return params ? paramParser(langString, params) : langString;
 };
 
 module.exports = {

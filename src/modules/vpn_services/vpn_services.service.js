@@ -1,13 +1,23 @@
 const { logInfo, logError } = require('../../utils/logger');
-const { PROVIDER_TOKEN_TEST } = require('../../config/envConfig').config;
+const {
+	app: {
+		ANDROID_APP_URL,
+		IOS_APP_URL,
+		PAGINATION_LIMIT,
+		prices,
+		numberOfMonths,
+	},
+	tg: { PROVIDER_TOKEN_TEST },
+} = require('../../config/envConfig');
 const { generateQRCode } = require('./helpers');
-const prices = require('../../const/prices');
+// const prices = require('../../const/prices');
 const vpnServiceButtons = require('./buttons/vpn_service_buttons');
 const { API } = require('../../utils/api');
 const redisClient = require('../../config/redisClient');
 const { InlineKeyboard } = require('grammy');
+const serversServices = require('../servers/servers.service');
 
-const label = 'vpnServices';
+const label = 'VpnServices';
 
 /** Метод выбора VPN услуг */
 const provideVpnServices = (ctx) => {
@@ -49,7 +59,14 @@ const getTrialPeriod = async (ctx) => {
 	}
 
 	ctx.reply(ctx.getLangText('vpn_services.trialSuccess'));
-	await getQRCode(ctx);
+	await serversServices.getServerList({
+		...ctx,
+		update: {
+			...ctx.update,
+			callback_query: { data: `servers:${PAGINATION_LIMIT}:0` },
+		},
+	});
+	// await getQRCode(ctx);
 };
 
 /** Метод оформления платных VPN подписок */
@@ -76,25 +93,37 @@ const getPaidVpnService = async (ctx) => {
 };
 
 /** Метод получения QR кода */
-const getQRCode = async (ctx) => {
+const getQRCode = async (ctx, code) => {
 	logInfo('Getting QR code', label, ctx);
 
 	const { id } = ctx.session.meta;
-	const qrCode = await generateQRCode(id, 'nl_01');
+	const qrCode = await generateQRCode(id, code);
 
 	ctx.answerCallbackQuery();
 	await ctx.replyWithPhoto(qrCode, {
 		caption: ctx.getLangText('vpn_services.qrCodeDescription'),
-		reply_markup: new InlineKeyboard().text(
-			ctx.getLangText('common.buttons.continue'),
-			'operating_systems'
-		),
+		reply_markup: new InlineKeyboard()
+			.url(ctx.getLangText('vpn_services.os.android'), ANDROID_APP_URL)
+			.url(ctx.getLangText('vpn_services.os.ios'), IOS_APP_URL),
 	});
 };
+
+// /** Метод выбора операционной системы */
+// const getOS = (ctx) => {
+// 	logInfo('Providing operating systems', label, ctx);
+// 	ctx.answerCallbackQuery();
+// 	ctx.reply('vpn_services.os.title', {
+// 		reply_markup: new InlineKeyboard()
+// 			.text(ctx.getLangText('vpn_services.os.android'), 'android_app')
+// 			.text(ctx.getLangText('vpn_services.os.ios'), 'ios_app'),
+// 	});
+// };
 
 module.exports = {
 	provideVpnServices,
 	getTrialPeriod,
 	getPaidVpnService,
+	// getServers,
 	getQRCode,
+	// getOS,
 };

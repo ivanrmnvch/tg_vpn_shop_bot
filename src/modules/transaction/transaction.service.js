@@ -1,6 +1,8 @@
 const { logInfo, logError } = require('../../utils/logger');
 const { API } = require('../../utils/api');
-const vpnServices = require('../vpn_services/vpn_services.service');
+const { PAGINATION_LIMIT } = require('../../config/envConfig').app;
+// const vpnServices = require('../vpn_services/vpn_services.service');
+const serversServices = require('../servers/servers.service');
 
 /** Метод подтверждения оплаты */
 const confirmPayment = async (ctx) => {
@@ -38,7 +40,8 @@ const successfulPayment = async (ctx) => {
 	}
 
 	ctx.reply(ctx.getLangText('transaction.title'));
-	await vpnServices.getQRCode(ctx);
+	await serversServices.getServerList(ctx);
+	// await vpnServices.getServers(ctx);
 };
 
 module.exports = {

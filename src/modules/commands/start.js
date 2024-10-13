@@ -3,13 +3,10 @@ const { logInfo } = require('../../utils/logger');
 
 const start = (ctx) => {
 	logInfo('Get started', start.name, ctx);
-	const inlineKeyboard = new InlineKeyboard().text(
-		ctx.getLangText('start.btn.buyVpnKey'),
-		// ctx.getLangText('start.btn.buyVpnKey'),
-		'vpn_services'
-	);
-	// .row()
-	// .text(ctx.getLangText('start.btn.myAccount'), 'my_account')
+	const inlineKeyboard = new InlineKeyboard()
+		.text(ctx.getLangText('start.btn.buyVpnKey'), 'vpn_services')
+		.row()
+		.text(ctx.getLangText('start.btn.myAccount'), 'my_account');
 	// .row()
 	// .text(ctx.getLangText('start.btn.support'), 'support')
 	// .row()

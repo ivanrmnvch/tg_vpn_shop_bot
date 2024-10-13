@@ -20,7 +20,7 @@ const setUserMeta = async (ctx, next) => {
 
 	const lang = value.from.language_code || 'en';
 
-	ctx.getLangText = (path) => getLocaleText(lang, path);
+	ctx.getLangText = (path, params) => getLocaleText(lang, path, params);
 
 	next();
 };
