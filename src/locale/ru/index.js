@@ -12,6 +12,7 @@ module.exports = {
 	start: {
 		greeting:
 			'👋 Добро пожаловать в VPN Key Store!\n\nВыберите интересующую вас опцию ниже, чтобы начать.',
+		callGreeting: 'VPN Key Store  🔷  Главное меню',
 		btn: {
 			buyVpnKey: '🔑 Купить VPN ключ',
 			myAccount: '👤 Мой аккаунт',

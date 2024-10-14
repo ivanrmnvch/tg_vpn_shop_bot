@@ -11,6 +11,7 @@ const commands = require('./modules/commands');
 const vpnServicesController = require('./modules/vpn_services/vpn_services.controller');
 const transactionController = require('./modules/transaction/transaction.controller');
 const serversController = require('./modules/servers/servers.controller');
+const commonController = require('./modules/common/common.controller');
 
 const { TELEGRAM_BOT_TOKEN } = require('./config/envConfig').tg;
 
@@ -31,19 +32,25 @@ const redisAdapter = new RedisAdapter({ instance: redisClient });
 
 bot.use(
 	session({
-		initial: () => ({}),
+		initial: () => ({
+			meta: null,
+			invoice: {
+				msgId: null,
+				chatId: null,
+			},
+		}),
 		storage: redisAdapter,
 	})
 );
 
 bot.use(meta);
 
-commands.start(bot);
-commands.servers(bot);
+commands(bot);
 
 vpnServicesController(bot);
 transactionController(bot);
 serversController(bot);
+commonController(bot);
 
 bot.catch((err) => {
 	logError('Global error', 'App', err);
@@ -51,3 +58,5 @@ bot.catch((err) => {
 });
 
 bot.start();
+
+console.log('bot  start', bot.api);

@@ -7,8 +7,9 @@ const setUserMeta = async (ctx, next) => {
 	const allowedMsgTypes = ['message', 'callback_query'];
 	const isAllowedType = allowedMsgTypes.includes(msgType);
 
-	const updateMeta =
-		isAllowedType && (!ctx.session?.meta || ctx.session?.meta?.newUser);
+	// todo обновлять meta если дата активного тарифа протухла
+	// (!ctx.session.meta || ctx.session.meta?.newUser || !ctx.session.meta?.activeTariff || ctx.session.meta?.expireTariff < new Date())
+	const updateMeta = isAllowedType; // && (!ctx.session.meta || ctx.session?.meta?.newUser);
 
 	if (updateMeta) {
 		logInfo('Setting user meta', setUserMeta.name, ctx);

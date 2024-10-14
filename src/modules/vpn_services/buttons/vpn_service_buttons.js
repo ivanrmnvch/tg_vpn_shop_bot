@@ -36,5 +36,6 @@ module.exports = (ctx) => {
 			}),
 			'year'
 		)
-		.row();
+		.row()
+		.text(ctx.getLangText('common.buttons.backToMenu'), 'back_to_main_menu');
 };

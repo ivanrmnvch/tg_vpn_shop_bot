@@ -6,6 +6,7 @@ const serversServices = require('../servers/servers.service');
 
 /** Метод подтверждения оплаты */
 const confirmPayment = async (ctx) => {
+	console.log('confirmPayment ctx', ctx);
 	logInfo('Payment confirmation', confirmPayment.name, ctx);
 	await ctx.answerPreCheckoutQuery(true);
 };
@@ -39,9 +40,18 @@ const successfulPayment = async (ctx) => {
 		// todo что делать в случае ошибки???
 	}
 
-	ctx.reply(ctx.getLangText('transaction.title'));
+	try {
+		// todo
+		await ctx.api.deleteMessage(
+			ctx.session.invoice.chatId,
+			ctx.session.invoice.msgId
+		);
+	} catch (e) {
+		console.error(e);
+	}
+
+	// ctx.reply(ctx.getLangText('transaction.title'));
 	await serversServices.getServerList(ctx);
-	// await vpnServices.getServers(ctx);
 };
 
 module.exports = {

@@ -4,4 +4,4 @@ const servers = async (ctx) => {
 	await serversService.getServerList(ctx);
 };
 
-module.exports = (bot) => bot.command('servers', servers);
+module.exports = servers;
