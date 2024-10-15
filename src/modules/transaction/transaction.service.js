@@ -1,12 +1,10 @@
 const { logInfo, logError } = require('../../utils/logger');
 const { API } = require('../../utils/api');
-const { PAGINATION_LIMIT } = require('../../config/envConfig').app;
-// const vpnServices = require('../vpn_services/vpn_services.service');
 const serversServices = require('../servers/servers.service');
 
 /** Метод подтверждения оплаты */
 const confirmPayment = async (ctx) => {
-	console.log('confirmPayment ctx', ctx);
+	// todo пинговать сервер
 	logInfo('Payment confirmation', confirmPayment.name, ctx);
 	await ctx.answerPreCheckoutQuery(true);
 };
@@ -27,7 +25,7 @@ const successfulPayment = async (ctx) => {
 
 	try {
 		logInfo('Saving a receipt', successfulPayment.name);
-		await API.post('transaction', {
+		await API.post('payments', {
 			tgPayId,
 			providePayId,
 			tgId,
@@ -38,6 +36,7 @@ const successfulPayment = async (ctx) => {
 	} catch (e) {
 		logError('Error saving receipt', successfulPayment.name, e);
 		// todo что делать в случае ошибки???
+		//  сохранить данные в txt
 	}
 
 	try {
@@ -47,9 +46,11 @@ const successfulPayment = async (ctx) => {
 			ctx.session.invoice.msgId
 		);
 	} catch (e) {
+		// todo
 		console.error(e);
 	}
 
+	// todo подумать как уведомить пользователя о покупке
 	// ctx.reply(ctx.getLangText('transaction.title'));
 	await serversServices.getServerList(ctx);
 };

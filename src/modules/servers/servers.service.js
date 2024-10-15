@@ -1,7 +1,7 @@
 const { logInfo, logError } = require('../../utils/logger');
 const { API } = require('../../utils/api');
 const { InlineKeyboard } = require('grammy');
-const vpnServicesService = require('../vpn_services/vpn_services.service');
+const qrCodeService = require('../qr_code/qr_code.service');
 const notify = require('../../components/notify');
 
 const label = 'Servers';
@@ -47,22 +47,31 @@ const getServerList = async (ctx, limit = 5, offset = 0) => {
 		.row()
 		.text(ctx.getLangText('common.buttons.mainMenu'), 'back_to_main_menu');
 
-	if (ctx.update.callback_query) {
-		ctx.editMessageReplyMarkup({
-			reply_markup: buttons,
-		});
-		ctx.answerCallbackQuery();
-	} else {
+	if (ctx.update.callback_query?.message?.photo) {
+		ctx.deleteMessage();
 		ctx.reply(ctx.getLangText('servers.title'), {
 			reply_markup: buttons,
 		});
+		return;
 	}
+
+	if (ctx.update.callback_query?.message?.text) {
+		ctx.answerCallbackQuery();
+		ctx.editMessageText(ctx.getLangText('servers.title'), {
+			reply_markup: buttons,
+		});
+		return;
+	}
+
+	ctx.reply(ctx.getLangText('servers.title'), {
+		reply_markup: buttons,
+	});
 };
 
 const getServer = async (ctx) => {
 	const { data } = ctx.update.callback_query;
 	const name = data.split(':').pop();
-	await vpnServicesService.getQRCode(ctx, name);
+	await qrCodeService.getQRCode(ctx, name);
 };
 
 const getServerListWrap = async (ctx) => {

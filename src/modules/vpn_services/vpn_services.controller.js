@@ -12,16 +12,4 @@ module.exports = (bot) => {
 		['month', 'six_months', 'year'],
 		vpnServicesService.getPaidVpnService
 	);
-
-	// /** Метод получения QR кода */
-	// bot.callbackQuery('get_qr_code', vpnServicesService.getQRCode);
-
-	// /** Метод выбора операционной системы */
-	// bot.callbackQuery('operating_systems', vpnServicesService.getOS);
-
-	// /** Метод получения android приложения */
-	// bot.callbackQuery('android_app');
-	//
-	// /** Метод получения ios приложения */
-	// bot.callbackQuery('ios_app');
 };

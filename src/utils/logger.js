@@ -5,7 +5,7 @@ let chalk;
 	chalk = await import('chalk').then((data) => data.default);
 })();
 
-// Функция для удаления ANSI escape кодов
+/** Функция для удаления ANSI escape кодов */
 const stripAnsi = (string) => string.replace(/\x1B\[[0-9;]*m/g, '');
 
 const logger = createLogger({

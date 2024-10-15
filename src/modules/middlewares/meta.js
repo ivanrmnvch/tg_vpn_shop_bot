@@ -7,9 +7,16 @@ const setUserMeta = async (ctx, next) => {
 	const allowedMsgTypes = ['message', 'callback_query'];
 	const isAllowedType = allowedMsgTypes.includes(msgType);
 
-	// todo обновлять meta если дата активного тарифа протухла
-	// (!ctx.session.meta || ctx.session.meta?.newUser || !ctx.session.meta?.activeTariff || ctx.session.meta?.expireTariff < new Date())
-	const updateMeta = isAllowedType; // && (!ctx.session.meta || ctx.session?.meta?.newUser);
+	const updateMeta =
+		isAllowedType && // если допустимый тип И
+		(!ctx.session.meta || // если нет meta
+			ctx.session.meta?.newUser || // ИЛИ новый пользователь
+			!ctx.session.meta?.activeTrial || // ИЛИ нет активного триала
+			(ctx.session.meta?.expireTrial &&
+				new Date(ctx.session.meta.expireTrial) < new Date()) || // ИЛИ у триала закончился срок
+			!ctx.session.meta?.activeTariff || // ИЛИ нет активного тарифа
+			(ctx.session.meta?.expireTariff &&
+				new Date(ctx.session.meta.expireTariff) < new Date())); // ИЛИ у текущего тарифа закончился срок
 
 	if (updateMeta) {
 		logInfo('Setting user meta', setUserMeta.name, ctx);

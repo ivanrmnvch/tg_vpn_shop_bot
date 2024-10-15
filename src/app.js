@@ -4,14 +4,16 @@ const redisClient = require('./config/redisClient');
 
 const { logError } = require('./utils/logger');
 
-const meta = require('./modules/middlewares/meta');
+const initialSession = require('./entities/initialSession');
 
-const commands = require('./modules/commands');
+const start = require('./modules/commands/start');
+const meta = require('./modules/middlewares/meta');
 
 const vpnServicesController = require('./modules/vpn_services/vpn_services.controller');
 const transactionController = require('./modules/transaction/transaction.controller');
 const serversController = require('./modules/servers/servers.controller');
-const commonController = require('./modules/common/common.controller');
+const routerController = require('./modules/router/router.controller');
+const subscriptionController = require('./modules/subscription/subscription.controller');
 
 const { TELEGRAM_BOT_TOKEN } = require('./config/envConfig').tg;
 
@@ -19,38 +21,21 @@ const bot = new Bot(TELEGRAM_BOT_TOKEN);
 
 const redisAdapter = new RedisAdapter({ instance: redisClient });
 
-// todo СЕЙЧАС!!!
-//  1. Обработать покупку ключа, если он уже куплен
-//   - можно кинуть заглушку, после добавить обновление тарифа
-//  2. Передавать price через #{}
-//  3. Добавить флажок страны в текстовку
-
-// todo ПОСЛЕ РЕЛИЗА!!!
-//  1. Добавить несколько ключей на аккаунт или возможность увеличивать количество подключений
-//  или оставить как есть: один аккунт один ключ
-//  2. Обновление тарифа до следующего уровня
-
 bot.use(
 	session({
-		initial: () => ({
-			meta: null,
-			invoice: {
-				msgId: null,
-				chatId: null,
-			},
-		}),
+		initial: () => initialSession,
 		storage: redisAdapter,
 	})
 );
 
 bot.use(meta);
-
-commands(bot);
+bot.command('start', start);
 
 vpnServicesController(bot);
 transactionController(bot);
 serversController(bot);
-commonController(bot);
+routerController(bot);
+subscriptionController(bot);
 
 bot.catch((err) => {
 	logError('Global error', 'App', err);
@@ -58,5 +43,3 @@ bot.catch((err) => {
 });
 
 bot.start();
-
-console.log('bot  start', bot.api);
