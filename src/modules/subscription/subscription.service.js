@@ -1,7 +1,11 @@
 const { InlineKeyboard } = require('grammy');
 const { formatDate, getDiff } = require('../../utils/date');
+const { logInfo } = require('../../utils/logger');
+
+const label = 'Subscription';
 
 const getSubscription = (ctx) => {
+	logInfo('Providing subscription info', label, ctx);
 	const { meta } = ctx.session;
 	const tariff = meta.tariff || 'trial';
 	const startDate = meta.startTariff || meta.startTrial;

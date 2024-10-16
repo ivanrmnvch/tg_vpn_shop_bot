@@ -1,31 +1,33 @@
 const { API } = require('../../../utils/api');
 const { logInfo, logError } = require('../../../utils/logger');
 
+const label = 'Middlewares/Meta';
+
 const checkUser = (id) => {
 	try {
-		logInfo('Check user exist', checkUser.name, { id });
+		logInfo('Check user exist', label, { id });
 		return API.post(`user/${id}/check`);
 	} catch (e) {
-		logError('User checking error', checkUser.name, e);
+		logError('User checking error', label, e);
 		// todo если проверка не удалась, какой сценарий? заглушка?
 	}
 };
 
 const addUser = (body) => {
 	try {
-		logInfo('Adding a new user', addUser.name, { body });
+		logInfo('Adding a new user', label, { body });
 		return API.post('user', body);
 	} catch (e) {
-		logError('Error adding new user', addUser.name, e);
+		logError('Error adding new user', label, e);
 	}
 };
 
 const getUserMeta = (id) => {
 	try {
-		logInfo('Getting user meta', getUserMeta.name, { id });
+		logInfo('Getting user meta', label, { id });
 		return API.get(`user/${id}/meta`);
 	} catch (e) {
-		logError('Error getting user meta', getUserMeta.name, e);
+		logError('Error getting user meta', label, e);
 	}
 };
 

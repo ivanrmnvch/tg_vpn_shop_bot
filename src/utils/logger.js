@@ -1,4 +1,5 @@
 const { createLogger, format, transports } = require('winston');
+const path = require('node:path');
 let chalk;
 
 (async () => {
@@ -50,12 +51,12 @@ const logger = createLogger({
 			format: format.printf((params) => params[Symbol.for('message')].original),
 		}),
 		new transports.File({
-			filename: 'error.log',
+			filename: path.resolve(__dirname, '../logs/error.log'),
 			level: 'error',
 			format: format.printf((params) => params[Symbol.for('message')].clean),
 		}),
 		new transports.File({
-			filename: 'combined.log',
+			filename: path.resolve(__dirname, '../logs/combined.log'),
 			format: format.printf((params) => params[Symbol.for('message')].clean),
 		}),
 	],

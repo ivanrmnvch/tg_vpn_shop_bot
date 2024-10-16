@@ -121,15 +121,14 @@ const getPaidVpnService = async (ctx) => {
 	);
 
 	try {
+		const msgId = sentInvoice.message_id;
+		const chatId = sentInvoice.chat.id;
 		const { id } = ctx.session.meta;
-		ctx.session.invoice = {
-			msgId: sentInvoice.message_id,
-			chatId: sentInvoice.chat.id,
-		};
+		logInfo('Save invoice meta data', label, { id, msgId, chatId });
+		ctx.session.invoice = { msgId, chatId };
 		redisClient.set(id, JSON.stringify(ctx.session));
 	} catch (e) {
-		// todo
-		console.error('e', e);
+		logError('Error saving invoice meta data', label, e);
 	}
 };
 
