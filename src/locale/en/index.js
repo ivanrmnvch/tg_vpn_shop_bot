@@ -12,16 +12,16 @@ module.exports = {
 	subscription,
 
 	start: {
-		greeting:
-			"👋 Welcome to VPN Key Store!\n\nSelect the option you're interested in below to get started.",
-		callGreeting: 'VPN Key Store 🔷 Главное меню',
+		greeting: '👋 Welcome to VPN Key Store!',
 		btn: {
 			buyVpnKey: '🔑 Купить VPN ключ',
 			subscription: 'Подписка',
 			servers: 'Сервера',
-			myAccount: '👤 Мой аккаунт',
-			support: '📞 Техподдержка',
-			aboutUs: 'ℹ️ О нас',
+			support: '📞 Support',
+			aboutUs: 'ℹ️ Privacy policy',
 		},
+	},
+	errors: {
+		global: 'Бот временно не доступен, пожалуйста, перезвоните позже',
 	},
 };

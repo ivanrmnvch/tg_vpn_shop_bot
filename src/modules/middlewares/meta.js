@@ -6,6 +6,10 @@ const label = 'Middlewares/Meta';
 
 const setUserMeta = async (ctx, next) => {
 	const [msgType, value] = Object.entries(ctx.update).pop();
+
+	const lang = value.from.language_code || 'en';
+	ctx.getLangText = (path, params) => getLocaleText(lang, path, params);
+
 	const allowedMsgTypes = ['message', 'callback_query'];
 	const isAllowedType = allowedMsgTypes.includes(msgType);
 
@@ -27,10 +31,6 @@ const setUserMeta = async (ctx, next) => {
 		ctx.session.meta = meta;
 		logInfo('User meta successfully set', label, meta);
 	}
-
-	const lang = value.from.language_code || 'en';
-
-	ctx.getLangText = (path, params) => getLocaleText(lang, path, params);
 
 	next();
 };

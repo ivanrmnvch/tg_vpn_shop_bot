@@ -39,7 +39,7 @@ subscriptionController(bot);
 
 bot.catch((err) => {
 	logError('Global error', 'App', err);
-	err.ctx.reply('>>> GRAMMY ERROR');
+	err.ctx.reply(err.ctx.getLangText('errors.global'));
 });
 
 bot.start();

@@ -84,12 +84,28 @@ module.exports = {
 		});
 	},
 	logError: (message, label, error) => {
-		const { stack, name, ctx: data } = error;
+		const {
+			stack,
+			name,
+			ctx: data,
+			method,
+			payload,
+			ok,
+			error_code,
+			description,
+			parameters,
+		} = error;
 		logger.error(message, {
 			stack,
 			meta: {
 				...dataTransform(data),
 				type: name,
+				method,
+				payload,
+				ok,
+				error_code,
+				description,
+				parameters,
 			},
 			label,
 		});

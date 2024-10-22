@@ -9,9 +9,16 @@ const label = 'Transaction';
 
 /** Метод подтверждения оплаты */
 const confirmPayment = async (ctx) => {
-	// todo пинговать сервер
-	logInfo('Payment confirmation', label, ctx);
-	await ctx.answerPreCheckoutQuery(true);
+	try {
+		logInfo('Server health check', label, ctx);
+		await API.post('healthcheck');
+		await ctx.answerPreCheckoutQuery(true);
+	} catch (e) {
+		logError('Server health check', label, e);
+		await ctx.answerPreCheckoutQuery(false, {
+			error_message: ctx.getLangText('transaction.error'),
+		});
+	}
 };
 
 /** Метод успешной оплаты */

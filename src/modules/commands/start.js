@@ -1,8 +1,10 @@
 const { InlineKeyboard } = require('grammy');
-const { logInfo } = require('../../utils/logger');
+const { logInfo, logError } = require('../../utils/logger');
 
-const start = (ctx) => {
-	logInfo('Get started', start.name, ctx);
+const label = 'Start';
+
+const start = async (ctx) => {
+	logInfo('Get started', label, ctx);
 	const buttons = new InlineKeyboard()
 		.text(ctx.getLangText('start.btn.buyVpnKey'), 'vpn_services')
 		.row();
@@ -11,32 +13,39 @@ const start = (ctx) => {
 		buttons
 			.text(ctx.getLangText('start.btn.subscription'), 'subscription')
 			.row()
-			.text(ctx.getLangText('start.btn.servers'), 'servers:5:0');
+			.text(ctx.getLangText('start.btn.servers'), 'servers:5:0')
+			.row()
+			.text(ctx.getLangText('start.btn.support'), 'support')
+			.text(ctx.getLangText('start.btn.aboutUs'), 'about_us');
 	}
-	// .text(ctx.getLangText('start.btn.myAccount'), 'my_account');
-	//.text(ctx.getLangText('start.btn.myAccount'), 'my_account');
-	// .row()
-	// .text(ctx.getLangText('start.btn.support'), 'support')
-	// .row()
-	// .text(ctx.getLangText('start.btn.aboutUs'), 'about_us');
 
 	if (ctx.update.callback_query?.message?.photo) {
-		ctx.deleteMessage();
-		ctx.reply(ctx.getLangText('start.callGreeting'), {
-			reply_markup: buttons,
-		});
+		try {
+			logInfo('Return to main menu from QR code', label, ctx);
+			await ctx.deleteMessage();
+			await ctx.reply(ctx.getLangText('start.greeting'), {
+				reply_markup: buttons,
+			});
+		} catch (e) {
+			logError('Error returning to main menu from QR code', label, e);
+		}
 		return;
 	}
 
 	if (ctx.update.callback_query?.message?.text) {
-		ctx.answerCallbackQuery();
-		ctx.editMessageText(ctx.getLangText('start.callGreeting'), {
-			reply_markup: buttons,
-		});
+		try {
+			logInfo('Return to main menu from message');
+			await ctx.answerCallbackQuery();
+			await ctx.editMessageText(ctx.getLangText('start.greeting'), {
+				reply_markup: buttons,
+			});
+		} catch (e) {
+			logError('Error returning to main menu from message', label, e);
+		}
 		return;
 	}
 
-	ctx.reply(ctx.getLangText('start.greeting'), {
+	await ctx.reply(ctx.getLangText('start.greeting'), {
 		reply_markup: buttons,
 	});
 };

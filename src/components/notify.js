@@ -1,10 +1,10 @@
-module.exports = (ctx, text) => {
+module.exports = async (ctx, text) => {
 	if (ctx.update.callback_query) {
-		ctx.answerCallbackQuery({
+		await ctx.answerCallbackQuery({
 			text,
 			show_alert: true,
 		});
 	} else {
-		ctx.reply(text);
+		await ctx.reply(text);
 	}
 };

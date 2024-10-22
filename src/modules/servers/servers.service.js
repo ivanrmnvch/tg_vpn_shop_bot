@@ -14,7 +14,7 @@ const getServerList = async (ctx, limit = 5, offset = 0) => {
 		servers = await API.get('servers', { params: { limit, offset } });
 	} catch (e) {
 		logError('Getting servers error', label, e);
-		notify(ctx, ctx.getLangText('servers.error.serverList'));
+		await notify(ctx, ctx.getLangText('servers.error.serverList'));
 		return;
 	}
 
@@ -48,22 +48,32 @@ const getServerList = async (ctx, limit = 5, offset = 0) => {
 		.text(ctx.getLangText('common.buttons.mainMenu'), 'back_to_main_menu');
 
 	if (ctx.update.callback_query?.message?.photo) {
-		ctx.deleteMessage();
-		ctx.reply(ctx.getLangText('servers.title'), {
-			reply_markup: buttons,
-		});
+		try {
+			logInfo('Return to servers from QR code', label, ctx);
+			await ctx.deleteMessage();
+			await ctx.reply(ctx.getLangText('servers.title'), {
+				reply_markup: buttons,
+			});
+		} catch (e) {
+			logError('Error returning to servers from QR code', label, e);
+		}
 		return;
 	}
 
 	if (ctx.update.callback_query?.message?.text) {
-		ctx.answerCallbackQuery();
-		ctx.editMessageText(ctx.getLangText('servers.title'), {
-			reply_markup: buttons,
-		});
+		try {
+			logInfo('Return to servers from message', label, ctx);
+			await ctx.answerCallbackQuery();
+			await ctx.editMessageText(ctx.getLangText('servers.title'), {
+				reply_markup: buttons,
+			});
+		} catch (e) {
+			logError('Error returning to servers from message', label, e);
+		}
 		return;
 	}
 
-	ctx.reply(ctx.getLangText('servers.title'), {
+	await ctx.reply(ctx.getLangText('servers.title'), {
 		reply_markup: buttons,
 	});
 };
@@ -71,6 +81,15 @@ const getServerList = async (ctx, limit = 5, offset = 0) => {
 const getServer = async (ctx) => {
 	const { data } = ctx.update.callback_query;
 	const name = data.split(':').pop();
+
+	try {
+		await ctx.deleteMessage();
+		await ctx.answerCallbackQuery();
+	} catch (e) {
+		logError('Message editing error', label, e);
+		return;
+	}
+
 	await qrCodeService.getQRCode(ctx, name);
 };
 

@@ -13,7 +13,7 @@ const { formatDate } = require('../../utils/date');
 const label = 'VpnServices';
 
 /** Метод выбора VPN услуг */
-const provideVpnServices = (ctx) => {
+const provideVpnServices = async (ctx) => {
 	logInfo('Providing vpn services', label, ctx);
 
 	const buttons = vpnServiceButtons(ctx);
@@ -22,22 +22,28 @@ const provideVpnServices = (ctx) => {
 		ctx.update.callback_query &&
 		ctx.update.callback_query.data === 'back_to_tariffs'
 	) {
-		ctx.deleteMessage();
-		ctx.reply(ctx.getLangText('vpn_services.title'), {
-			reply_markup: buttons,
-		});
+		try {
+			await ctx.deleteMessage();
+			await ctx.reply(ctx.getLangText('vpn_services.title'), {
+				reply_markup: buttons,
+			});
+		} catch (e) {}
+
 		return;
 	}
 
 	if (ctx.update.callback_query) {
-		ctx.answerCallbackQuery();
-		ctx.editMessageText(ctx.getLangText('vpn_services.title'), {
-			reply_markup: buttons,
-		});
+		try {
+			await ctx.answerCallbackQuery();
+			await ctx.editMessageText(ctx.getLangText('vpn_services.title'), {
+				reply_markup: buttons,
+			});
+		} catch (e) {}
+
 		return;
 	}
 
-	ctx.reply(ctx.getLangText('vpn_services.title'), {
+	await ctx.reply(ctx.getLangText('vpn_services.title'), {
 		reply_markup: buttons,
 	});
 };
@@ -47,7 +53,7 @@ const getTrialPeriod = async (ctx) => {
 	logInfo('Getting trial period', label, ctx);
 
 	if (!ctx.session.meta.newUser) {
-		ctx.answerCallbackQuery({
+		await ctx.answerCallbackQuery({
 			text: ctx.getLangText('vpn_services.trialIsBlock'),
 			show_alert: true,
 		});
@@ -61,7 +67,7 @@ const getTrialPeriod = async (ctx) => {
 		await API.post(`user/${id}/trial`);
 	} catch (e) {
 		logError('User trial update error', label, e);
-		ctx.answerCallbackQuery({
+		await ctx.answerCallbackQuery({
 			text: ctx.getLangText('vpn_services.trialUpdateError'),
 			show_alert: true,
 		});

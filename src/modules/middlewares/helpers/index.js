@@ -9,7 +9,6 @@ const checkUser = (id) => {
 		return API.post(`user/${id}/check`);
 	} catch (e) {
 		logError('User checking error', label, e);
-		// todo если проверка не удалась, какой сценарий? заглушка?
 	}
 };
 
