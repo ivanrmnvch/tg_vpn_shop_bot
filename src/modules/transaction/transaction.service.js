@@ -51,7 +51,7 @@ const successfulPayment = async (ctx) => {
 		logError('Error saving receipt', label, e);
 		const log = `${JSON.stringify(body)}${os.EOL}`;
 		fs.appendFile(
-			path.resolve(__dirname, '../../logs/transaction.log'),
+			path.resolve(__dirname, '../../../logs/transaction.log'),
 			log,
 			'utf8',
 			(err) => {
